@@ -1,5 +1,8 @@
 package qouteall.imm_ptl.core.mixin.common.container_gui;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
@@ -14,21 +17,31 @@ import qouteall.imm_ptl.core.block_manipulation.BlockManipulationServer;
 @SuppressWarnings("ALL")
 @Mixin(Container.class)
 public interface MixinContainer {
-    @Inject(
+    @WrapOperation(
         method = "stillValidBlockEntity(Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/entity/player/Player;I)Z",
-        at = @At("RETURN"),
-        cancellable = true
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/player/Player;distanceToSqr(DDD)D"
+        )
     )
-    private static void onStillValidBlockEntity(
-        BlockEntity blockEntity, Player player, int distance, CallbackInfoReturnable<Boolean> cir
+    private static double wrapDistanceToSqr(
+        Player player, double x, double y, double z, Operation<Double> operation,
+        @Local BlockEntity blockEntity, @Local(argsOnly = true) int maxDistance
     ) {
-        if (!cir.getReturnValue()) {
+        double dist = operation.call(player, x, y, z);
+        
+        if (dist > maxDistance) {
             BlockPos targetPos = blockEntity.getBlockPos();
             Level targetWorld = blockEntity.getLevel();
-            
             if (BlockManipulationServer.validateReach(player, targetWorld, targetPos)) {
-                cir.setReturnValue(true);
+                return 0;
             }
+            else {
+                return 999.0;
+            }
+        }
+        else {
+            return dist;
         }
     }
     
