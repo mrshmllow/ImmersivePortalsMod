@@ -1,1 +1,1 @@
-Possibly fix crash in sculpting command.
+Fix https://github.com/iPortalTeam/ImmersivePortalsMod/issues/1579
