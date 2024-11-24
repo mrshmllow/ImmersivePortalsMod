@@ -56,8 +56,8 @@
     "resolutioncontrol": "*",
     "canvas": "*",
     "cardboard": "*",
-    "iris": ["<1.7.3", ">1.7.3"],
-    "sodium": ["<0.5.11", ">0.5.11"],
+    "iris": ["<1.8.0", ">1.8.0"],
+    "sodium": ["<0.6.0", ">0.6.0"],
     "gravity_api": "*",
     "vmp": "*"
   },
