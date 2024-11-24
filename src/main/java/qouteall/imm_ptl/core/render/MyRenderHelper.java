@@ -283,6 +283,32 @@ public class MyRenderHelper {
             x, y, viewportWidth, viewportHeight
         );
     }
+
+    public static void drawFramebuffer(
+            RenderTarget textureProvider, boolean doUseAlphaBlend, boolean doEnableModifyAlpha,
+            float xMin, float xMax, float yMin, float yMax
+    ) {
+        drawFramebufferWithCoordinatesAndDimensions(
+                textureProvider,
+                doUseAlphaBlend, doEnableModifyAlpha,
+                0, 0,
+                client.getWindow().getWidth(),
+                client.getWindow().getHeight()
+        );
+    }
+
+    public static void drawFramebufferWithViewport(
+            RenderTarget textureProvider, boolean doUseAlphaBlend, boolean doEnableModifyAlpha,
+            float left, float right, float bottom, float up,
+            int viewportWidth, int viewportHeight
+    ) {
+        drawFramebufferWithCoordinatesAndDimensions(
+                textureProvider,
+                doUseAlphaBlend, doEnableModifyAlpha,
+                0, 0,
+                viewportWidth, viewportHeight
+        );
+    }
     
     public static void drawFramebufferWithBounds(
         RenderTarget textureProvider, boolean doUseAlphaBlend, boolean doEnableModifyAlpha,
