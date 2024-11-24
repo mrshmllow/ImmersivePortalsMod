@@ -1,1 +1,1 @@
-Bugfixes.
+Fix compatibility with the latest Fabric API.
