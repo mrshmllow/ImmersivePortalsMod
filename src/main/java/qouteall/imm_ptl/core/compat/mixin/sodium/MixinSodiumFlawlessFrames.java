@@ -1,6 +1,6 @@
 package qouteall.imm_ptl.core.compat.mixin.sodium;
 
-import me.jellysquid.mods.sodium.client.util.FlawlessFrames;
+import net.caffeinemc.mods.sodium.client.util.FlawlessFrames;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

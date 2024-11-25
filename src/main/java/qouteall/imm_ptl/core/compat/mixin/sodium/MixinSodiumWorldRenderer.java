@@ -1,7 +1,7 @@
 package qouteall.imm_ptl.core.compat.mixin.sodium;
 
-import me.jellysquid.mods.sodium.client.render.SodiumWorldRenderer;
-import me.jellysquid.mods.sodium.client.render.viewport.Viewport;
+import net.caffeinemc.mods.sodium.client.render.SodiumWorldRenderer;
+import net.caffeinemc.mods.sodium.client.render.viewport.Viewport;
 import net.minecraft.client.Camera;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,9 +18,7 @@ public class MixinSodiumWorldRenderer {
         at = @At("HEAD")
     )
     private void onUpdateChunks(
-        Camera camera, Viewport viewport,
-        int frame, boolean spectator, boolean updateChunksImmediately,
-        CallbackInfo ci
+        Camera camera, Viewport viewport, boolean spectator, boolean updateChunksImmediately, CallbackInfo ci
     ) {
         SodiumInterface.frustumCuller = new FrustumCuller();
         Vec3 cameraPos = camera.getPosition();
