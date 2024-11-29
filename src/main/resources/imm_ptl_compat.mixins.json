@@ -13,6 +13,8 @@
     "iris.MixinIrisIris",
     "iris.MixinIrisRenderingPipeline",
     "iris.MixinIrisShadowRenderTargets",
+    "iris.MixinIrisSodiumShader",
+    "iris.MixinIrisTransformPatcher",
     "sodium.IESodiumWorldRenderer",
     "sodium.MixinSodiumDefaultShaderInterface",
     "sodium.MixinSodiumFlawlessFrames",

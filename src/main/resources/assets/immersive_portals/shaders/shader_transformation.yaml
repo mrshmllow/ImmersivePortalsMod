@@ -46,8 +46,8 @@ configs:
   - comment: For iris+sodium
     type: vs
     affectedShaders:
-      - iris_sodium_terrain_vertex
-      - iris_sodium_translucent_vertex
+      - iris_gbuffers_terrain
+      - iris_gbuffers_water
     transformations:
       - pattern: |-
           void ( )*main( )*\(( )*( )*\)( )*(
@@ -81,4 +81,4 @@ configs:
               (u_ModelViewMatrix * vec4(position, 1.0)).xyz, iportal_ClippingEquation.xyz
           ) + iportal_ClippingEquation.w;
           }
-    debugOutput: true
+    debugOutput: false
