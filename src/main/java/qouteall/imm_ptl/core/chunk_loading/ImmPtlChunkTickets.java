@@ -10,13 +10,11 @@ import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ChunkResult;
 import net.minecraft.server.level.ChunkTaskPriorityQueue;
-import net.minecraft.server.level.ChunkTaskPriorityQueueSorter;
 import net.minecraft.server.level.DistanceManager;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.Ticket;
 import net.minecraft.server.level.TicketType;
 import net.minecraft.util.SortedArraySet;
-import net.minecraft.util.thread.ProcessorMailbox;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.LevelChunk;
 import org.apache.commons.lang3.Validate;
@@ -202,7 +200,7 @@ public class ImmPtlChunkTickets {
             
             if (!resultNow.isSuccess()) {
                 LOGGER.error(
-                    "Chunk loading failure {} {} {}",
+                    "Chunk loading failure {} {}",
                     world, new ChunkPos(chunkPos)
                 );
             }

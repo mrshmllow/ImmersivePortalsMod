@@ -1,5 +1,6 @@
 package qouteall.imm_ptl.core.compat.mixin.iris;
 
+import com.mojang.blaze3d.shaders.CompiledShader;
 import com.mojang.blaze3d.shaders.Program;
 import net.irisshaders.iris.pipeline.transform.PatchShaderType;
 import net.irisshaders.iris.pipeline.transform.TransformPatcher;
@@ -32,7 +33,7 @@ public class MixinIrisTransformPatcher {
         Map<PatchShaderType, String> map = cir.getReturnValue();
         String code = map.get(PatchShaderType.VERTEX);
         if (code != null) {
-            String transformed = ShaderCodeTransformation.transform(Program.Type.VERTEX, "iris_" + name, code);
+            String transformed = ShaderCodeTransformation.transform(CompiledShader.Type.VERTEX, "iris_" + name, code);
             map.put(PatchShaderType.VERTEX, transformed);
         }
     }
