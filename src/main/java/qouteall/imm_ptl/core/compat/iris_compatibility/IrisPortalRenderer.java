@@ -199,11 +199,6 @@ public class IrisPortalRenderer extends PortalRenderer {
     
     }
     
-    @Override
-    public void onAfterTranslucentRendering(Matrix4f modelView) {
-    
-    }
-    
     
     @Override
     public void finishRendering() {

@@ -57,6 +57,7 @@ import static org.lwjgl.opengl.GL11.GL_RED;
 import static org.lwjgl.opengl.GL11.glCullFace;
 import static org.lwjgl.opengl.GL11.glReadPixels;
 
+@SuppressWarnings("resource")
 public class MyRenderHelper {
     
     public static final Minecraft client = Minecraft.getInstance();
@@ -64,6 +65,18 @@ public class MyRenderHelper {
     public static final ShaderProgram BLIT_SCREEN_NOBLEND = CoreShadersAccessor.register(
         "blit_screen_noblend",
         DefaultVertexFormat.BLIT_SCREEN,
+        ShaderDefines.EMPTY
+    );
+    
+    public static final ShaderProgram PORTAL_AREA = CoreShadersAccessor.register(
+        "portal_area",
+        DefaultVertexFormat.POSITION_COLOR,
+        ShaderDefines.EMPTY
+    );
+    
+    public static final ShaderProgram PORTAL_DRAW_FB_IN_AREA = CoreShadersAccessor.register(
+        "portal_draw_fb_in_area",
+        DefaultVertexFormat.POSITION_COLOR,
         ShaderDefines.EMPTY
     );
     
@@ -155,42 +168,50 @@ public class MyRenderHelper {
 //    public static ShaderInstance portalAreaShader;
 //    public static ShaderInstance blitScreenNoBlendShader;
 //
-//    public static void drawPortalAreaWithFramebuffer(
-//        Portal portal,
-//        RenderTarget textureProvider,
-//        Matrix4f modelViewMatrix,
-//        Matrix4f projectionMatrix
-//    ) {
-//
-//        GlStateManager._colorMask(true, true, true, true);
-//        GlStateManager._enableDepthTest();
-//        GlStateManager._depthMask(true);
-//        GlStateManager._viewport(0, 0, textureProvider.width, textureProvider.height);
-//
-//        DrawFbInAreaShader shader = drawFbInAreaShader;
-//        shader.setSampler("DiffuseSampler", textureProvider.getColorTextureId());
-//        shader.loadWidthHeight(textureProvider.width, textureProvider.height);
-//
-//        if (shader.MODEL_VIEW_MATRIX != null) {
-//            shader.MODEL_VIEW_MATRIX.set(modelViewMatrix);
-//        }
-//
-//        if (shader.PROJECTION_MATRIX != null) {
-//            shader.PROJECTION_MATRIX.set(projectionMatrix);
-//        }
-//
-//        shader.apply();
-//
-//        ViewAreaRenderer.buildPortalViewAreaTrianglesBuffer(
-//            Vec3.ZERO,//fog
-//            portal,
-//            CHelper.getCurrentCameraPos(),
-//            RenderStates.getPartialTick()
-//        );
-//
-//
-//        shader.clear();
-//    }
+    @SuppressWarnings("SuspiciousNameCombination")
+    public static void drawPortalAreaWithFramebuffer(
+        Portal portal,
+        RenderTarget textureProvider,
+        Matrix4f modelViewMatrix,
+        Matrix4f projectionMatrix
+    ) {
+
+        GlStateManager._colorMask(true, true, true, true);
+        GlStateManager._enableDepthTest();
+        GlStateManager._depthMask(true);
+        GlStateManager._viewport(0, 0, textureProvider.width, textureProvider.height);
+
+        RenderSystem.setShader(PORTAL_DRAW_FB_IN_AREA);
+        CompiledShaderProgram shader = RenderSystem.getShader();
+        
+        Objects.requireNonNull(shader, "shader is null")
+            .bindSampler("DiffuseSampler", textureProvider.getColorTextureId());
+        Objects.requireNonNull(shader.getUniform("w"), "no w")
+            .set(textureProvider.width);
+        Objects.requireNonNull(shader.getUniform("h"), "no h")
+            .set(textureProvider.height);
+
+        if (shader.MODEL_VIEW_MATRIX != null) {
+            shader.MODEL_VIEW_MATRIX.set(modelViewMatrix);
+        }
+
+        if (shader.PROJECTION_MATRIX != null) {
+            shader.PROJECTION_MATRIX.set(projectionMatrix);
+        }
+
+        shader.apply();
+
+        ViewAreaRenderer.buildPortalViewAreaTrianglesBuffer(
+            Vec3.ZERO,//fog
+            portal,
+            CHelper.getCurrentCameraPos(),
+            RenderStates.getPartialTick()
+        );
+        
+        shader.clear();
+        
+        RenderSystem.clearShader();
+    }
     
     public static void renderScreenTriangle() {
         renderScreenTriangle(255, 255, 255, 255);
@@ -495,6 +516,7 @@ public class MyRenderHelper {
     
     private static boolean debugEnabled = false;
     
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     public static void debugFramebufferDepth() {
         if (!debugEnabled) {
             return;
