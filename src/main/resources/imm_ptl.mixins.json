@@ -125,7 +125,7 @@
     "client.render.optimization.MixinLevelRenderer_Clouds",
     "client.render.optimization.MixinSectionBufferBuilderPack",
     "client.render.shader.MixinGameRenderer_Shaders",
-    "client.render.shader.MixinProgram",
+    "client.render.shader.MixinCompiledShader",
     "client.render.shader.MixinShaderInstance",
     "client.sound.MixinClientLevel_Sound",
     "client.sync.IEBlockStatePredictionHandler",

@@ -15,14 +15,14 @@ import java.util.Map;
 @Mixin(GameRenderer.class)
 public class MixinGameRenderer_Shaders {
     
-    @Inject(
-        method = "reloadShaders", at = @At("RETURN")
-    )
-    private void onLoadShaders(ResourceProvider resourceProvider, CallbackInfo ci) {
-        MyRenderHelper.loadShaderSignal.emit(
-            resourceProvider, (shader) -> {
-                shaders.put(shader.getName(), shader);
-            }
-        );
-    }
+//    @Inject(
+//        method = "reloadShaders", at = @At("RETURN")
+//    )
+//    private void onLoadShaders(ResourceProvider resourceProvider, CallbackInfo ci) {
+//        MyRenderHelper.loadShaderSignal.emit(
+//            resourceProvider, (shader) -> {
+//                shaders.put(shader.getName(), shader);
+//            }
+//        );
+//    }
 }
