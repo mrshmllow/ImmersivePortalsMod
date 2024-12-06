@@ -3,6 +3,7 @@ package qouteall.imm_ptl.core.mixin.client.render;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.mojang.blaze3d.framegraph.FramePass;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.resource.GraphicsResourceAllocator;
@@ -116,6 +117,8 @@ public abstract class MixinLevelRenderer implements IEWorldRenderer {
     private ObjectArrayList<SectionRenderDispatcher.RenderSection> visibleSections;
     
     @Shadow @Final private static Logger LOGGER;
+    
+    @Shadow private @Nullable RenderTarget entityOutlineTarget;
     
     @Inject(
         method = "method_62214", // the lambda in addMainPass
@@ -410,69 +413,51 @@ public abstract class MixinLevelRenderer implements IEWorldRenderer {
         ClientWorldLoader._onWorldRendererReloaded();
     }
     
-    @Inject(
-        method = "renderSky", at = @At("HEAD"), cancellable = true
-    )
-    private void onRenderSkyBegin(
-        Matrix4f modelView, Matrix4f matrix4f, float partialTick, Camera camera,
-        boolean isFoggy, Runnable runnable, CallbackInfo ci
-    ) {
-        if (WorldRenderInfo.isRendering()) {
-            if (!WorldRenderInfo.getTopRenderInfo().doRenderSky) {
-                if (!IrisInterface.invoker.isShaders()) {
-                    ci.cancel();
-                }
-            }
-        }
-        
-        if (PortalRendering.isRenderingOddNumberOfMirrors()) {
-            MyRenderHelper.applyMirrorFaceCulling();
-        }
-    }
-    
-    @Inject(
-        method = "renderSky",
-        at = @At("RETURN")
-    )
-    private void onRenderSkyEnd(
-        Matrix4f modelView, Matrix4f matrix4f, float f, Camera camera,
-        boolean bl, Runnable runnable, CallbackInfo ci
-    ) {
-        MyRenderHelper.recoverFaceCulling();
-    }
-    
-    // correct the eye position for sky rendering
-    @Redirect(
-        method = "renderSky",
+    @WrapOperation(
+        method = "addSkyPass",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/client/player/LocalPlayer;getEyePosition(F)Lnet/minecraft/world/phys/Vec3;"
+            target = "Lcom/mojang/blaze3d/framegraph/FramePass;executes(Ljava/lang/Runnable;)V"
         )
     )
-    private Vec3 redirectGetEyePositionInSkyRendering(LocalPlayer player, float partialTicks) {
-        if (WorldRenderInfo.isRendering()) {
-            return WorldRenderInfo.getCameraPos();
-        }
-        return player.getEyePosition(partialTicks);
+    private void wrapAddSkyPassExecute(FramePass instance, Runnable runnable, Operation<Void> original) {
+        original.call(instance, (Runnable) () -> {
+            if (WorldRenderInfo.isRendering()) {
+                if (!WorldRenderInfo.getTopRenderInfo().doRenderSky) {
+                    if (!IrisInterface.invoker.isShaders()) {
+                        // skip sky rendering (except for iris)
+                        return;
+                    }
+                }
+            }
+            
+            if (PortalRendering.isRenderingOddNumberOfMirrors()) {
+                MyRenderHelper.applyMirrorFaceCulling();
+            }
+            
+            runnable.run();
+            
+            MyRenderHelper.recoverFaceCulling();
+        });
     }
     
-    // vanilla clears translucentFramebuffer even when transparencyShader is null
-    // it makes the framebuffer to be wrongly bound in fabulous mode
-    @Redirect(
-        method = "renderLevel",
-        at = @At(
-            value = "FIELD",
-            target = "Lnet/minecraft/client/renderer/LevelRenderer;translucentTarget:Lcom/mojang/blaze3d/pipeline/RenderTarget;"
-        )
-    )
-    private RenderTarget redirectTranslucentFramebuffer(LevelRenderer this_) {
-        if (PortalRendering.isRendering()) {
-            return null;
-        }
-        else {
-            return translucentTarget;
-        }
-    }
+//    // vanilla clears translucentFramebuffer even when transparencyShader is null
+//    // it makes the framebuffer to be wrongly bound in fabulous mode
+//    @Redirect(
+//        method = "renderLevel",
+//        at = @At(
+//            value = "FIELD",
+//            target = "Lnet/minecraft/client/renderer/LevelRenderer;translucentTarget:Lcom/mojang/blaze3d/pipeline/RenderTarget;"
+//        )
+//    )
+//    private RenderTarget redirectTranslucentFramebuffer(LevelRenderer this_) {
+//        if (PortalRendering.isRendering()) {
+//            return null;
+//        }
+//        else {
+//            return translucentTarget;
+//        }
+//    }
     
     // if not in spectator mode, when the camera is in block chunk culling will cull chunks wrongly
     @ModifyVariable(
@@ -558,16 +543,6 @@ public abstract class MixinLevelRenderer implements IEWorldRenderer {
     }
     
     @Override
-    public PostChain portal_getTransparencyShader() {
-        return transparencyChain;
-    }
-    
-    @Override
-    public void portal_setTransparencyShader(PostChain arg) {
-        transparencyChain = arg;
-    }
-    
-    @Override
     public RenderBuffers ip_getRenderBuffers() {
         return renderBuffers;
     }
@@ -589,22 +564,7 @@ public abstract class MixinLevelRenderer implements IEWorldRenderer {
     
     @Override
     public void portal_fullyDispose() {
-        deinitTransparency();
-        
-        if (starBuffer != null) {
-            starBuffer.close();
-        }
-        if (skyBuffer != null) {
-            skyBuffer.close();
-        }
-        if (darkBuffer != null) {
-            darkBuffer.close();
-        }
-        if (cloudBuffer != null) {
-            cloudBuffer.close();
-        }
-        
-        level = null;
+        // this is probably not needed in 1.21.3
     }
     
     @Override
