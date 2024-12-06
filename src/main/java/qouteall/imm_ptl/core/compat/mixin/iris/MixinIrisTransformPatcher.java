@@ -1,7 +1,6 @@
 package qouteall.imm_ptl.core.compat.mixin.iris;
 
 import com.mojang.blaze3d.shaders.CompiledShader;
-import com.mojang.blaze3d.shaders.Program;
 import net.irisshaders.iris.pipeline.transform.PatchShaderType;
 import net.irisshaders.iris.pipeline.transform.TransformPatcher;
 import net.irisshaders.iris.pipeline.transform.parameter.Parameters;

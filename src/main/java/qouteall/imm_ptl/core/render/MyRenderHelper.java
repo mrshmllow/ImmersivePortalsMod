@@ -55,55 +55,55 @@ public class MyRenderHelper {
     
     public static final Minecraft client = Minecraft.getInstance();
     
-    public static final SignalBiArged<ResourceProvider, Consumer<ShaderInstance>> loadShaderSignal =
-        new SignalBiArged<>();
+//    public static final SignalBiArged<ResourceProvider, Consumer<ShaderInstance>> loadShaderSignal =
+//        new SignalBiArged<>();
     
     public static void init() {
         
-        loadShaderSignal.connect((resourceManager, resultConsumer) -> {
-            try {
-                DrawFbInAreaShader shader = new DrawFbInAreaShader(
-                    getResourceFactory(resourceManager),
-                    "portal_draw_fb_in_area",
-                    DefaultVertexFormat.POSITION_COLOR
-                );
-                resultConsumer.accept(shader);
-                drawFbInAreaShader = shader;
-            }
-            catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+//        loadShaderSignal.connect((resourceManager, resultConsumer) -> {
+//            try {
+//                DrawFbInAreaShader shader = new DrawFbInAreaShader(
+//                    getResourceFactory(resourceManager),
+//                    "portal_draw_fb_in_area",
+//                    DefaultVertexFormat.POSITION_COLOR
+//                );
+//                resultConsumer.accept(shader);
+//                drawFbInAreaShader = shader;
+//            }
+//            catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
+//        });
         
-        loadShaderSignal.connect((resourceManager, resultConsumer) -> {
-            try {
-                ShaderInstance shader = new ShaderInstance(
-                    getResourceFactory(resourceManager),
-                    "portal_area",
-                    DefaultVertexFormat.POSITION_COLOR
-                );
-                resultConsumer.accept(shader);
-                portalAreaShader = shader;
-            }
-            catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        
-        loadShaderSignal.connect((resourceManager, resultConsumer) -> {
-            try {
-                ShaderInstance shader = new ShaderInstance(
-                    getResourceFactory(resourceManager),
-                    "blit_screen_noblend",
-                    DefaultVertexFormat.POSITION_TEX_COLOR
-                );
-                resultConsumer.accept(shader);
-                blitScreenNoBlendShader = shader;
-            }
-            catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+//        loadShaderSignal.connect((resourceManager, resultConsumer) -> {
+//            try {
+//                ShaderInstance shader = new ShaderInstance(
+//                    getResourceFactory(resourceManager),
+//                    "portal_area",
+//                    DefaultVertexFormat.POSITION_COLOR
+//                );
+//                resultConsumer.accept(shader);
+//                portalAreaShader = shader;
+//            }
+//            catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
+//        });
+//
+//        loadShaderSignal.connect((resourceManager, resultConsumer) -> {
+//            try {
+//                ShaderInstance shader = new ShaderInstance(
+//                    getResourceFactory(resourceManager),
+//                    "blit_screen_noblend",
+//                    DefaultVertexFormat.POSITION_TEX_COLOR
+//                );
+//                resultConsumer.accept(shader);
+//                blitScreenNoBlendShader = shader;
+//            }
+//            catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
+//        });
     }
     
     // vanilla hardcodes the shader namespace to be "minecraft"
