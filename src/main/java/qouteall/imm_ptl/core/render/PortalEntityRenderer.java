@@ -21,7 +21,7 @@ public class PortalEntityRenderer extends EntityRenderer<Portal> {
     public PortalEntityRenderer(EntityRendererProvider.Context context) {
         super(context);
     }
-    
+
     @Override
     public void render(
         Portal portal,
@@ -47,16 +47,4 @@ public class PortalEntityRenderer extends EntityRenderer<Portal> {
         
         super.render(portal, yaw, partialTick, matrixStack, bufferSource, light);
     }
-    
-    @Override
-    public ResourceLocation getTextureLocation(Portal portal) {
-//        if (portal instanceof BreakablePortalEntity) {
-//            if (((BreakablePortalEntity) portal).overlayBlockState != null) {
-//                return SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE;
-//            }
-//        }
-        return null;
-    }
-    
-    
 }

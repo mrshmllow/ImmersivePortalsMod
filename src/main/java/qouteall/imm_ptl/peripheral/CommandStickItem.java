@@ -16,9 +16,11 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -107,12 +109,12 @@ public class CommandStickItem extends Item {
     }
     
     @Override
-    public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
-        doUse(player, player.getItemInHand(hand));
+    public InteractionResult use(Level world, Player player, InteractionHand hand) {
+        doUse(world, player, player.getItemInHand(hand));
         return super.use(world, player, hand);
     }
     
-    private void doUse(Player player, ItemStack stack) {
+    private void doUse(Level level, Player player, ItemStack stack) {
         if (player.level().isClientSide()) {
             return;
         }
@@ -124,8 +126,9 @@ public class CommandStickItem extends Item {
                 LOGGER.error("Missing component in command stick item {}", stack);
                 return;
             }
-            
-            CommandSourceStack commandSource = player.createCommandSourceStack().withPermission(2);
+
+            // TODO(marshmallow): Check if casting here is horrible
+            CommandSourceStack commandSource = player.createCommandSourceStackForNameResolution((ServerLevel) level).withPermission(2);
             
             MinecraftServer server = player.getServer();
             assert server != null;
@@ -178,17 +181,6 @@ public class CommandStickItem extends Item {
         }
         
         tooltip.add(Component.translatable("imm_ptl.command_stick").withStyle(ChatFormatting.GRAY));
-    }
-    
-    @Override
-    public @NotNull String getDescriptionId(ItemStack stack) {
-        Data data = stack.get(COMPONENT_TYPE);
-        
-        if (data == null) {
-            return "";
-        }
-        
-        return data.nameTranslationKey;
     }
     
     public static void sendMessage(Player player, Component message) {

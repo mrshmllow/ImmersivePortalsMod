@@ -64,9 +64,9 @@ public enum AARotation {
         this.transformedX = transformedX;
         this.transformedY = dirCrossProduct(transformedZ, transformedX);
         matrix = new IntMatrix3(
-            this.transformedX.getNormal(),
-            this.transformedY.getNormal(),
-            this.transformedZ.getNormal()
+            this.transformedX.getUnitVec3i(),
+            this.transformedY.getUnitVec3i(),
+            this.transformedZ.getUnitVec3i()
         );
         quaternion = matrix.toQuaternion();
     }
@@ -76,7 +76,7 @@ public enum AARotation {
     }
     
     public Direction transformDirection(Direction direction) {
-        BlockPos transformedVec = transform(direction.getNormal());
+        BlockPos transformedVec = transform(direction.getUnitVec3i());
         return Direction.fromDelta(
             transformedVec.getX(),
             transformedVec.getY(),

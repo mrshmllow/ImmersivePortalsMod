@@ -27,6 +27,7 @@ import qouteall.q_misc_util.my_util.Sphere;
 
 import java.util.Random;
 import java.util.function.IntSupplier;
+import java.util.logging.Level;
 
 @Environment(EnvType.CLIENT)
 public class WireRenderingHelper {

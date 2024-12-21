@@ -1,5 +1,6 @@
 package qouteall.imm_ptl.core.mixin.client.sync;
 
+import com.mojang.brigadier.ParseResults;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.ClientPacketListener;
@@ -7,6 +8,7 @@ import net.minecraft.client.multiplayer.CommonListenerCookie;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.multiplayer.prediction.BlockStatePredictionHandler;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
@@ -58,9 +60,6 @@ public abstract class MixinClientPacketListener implements IEClientPlayNetworkHa
     public abstract void handleSetEntityPassengersPacket(ClientboundSetPassengersPacket entityPassengersSetS2CPacket_1);
     
     @Shadow
-    protected abstract void applyLightData(int x, int z, ClientboundLightUpdatePacketData data);
-    
-    @Shadow
     @Final
     private static Logger LOGGER;
     
@@ -69,7 +68,9 @@ public abstract class MixinClientPacketListener implements IEClientPlayNetworkHa
     
     @Shadow
     protected abstract void enableChunkLight(LevelChunk chunk, int x, int z);
-    
+
+    @Shadow protected abstract ParseResults<SharedSuggestionProvider> parseCommand(String command);
+
     @Override
     public void ip_setWorld(ClientLevel world) {
         this.level = world;
@@ -100,7 +101,7 @@ public abstract class MixinClientPacketListener implements IEClientPlayNetworkHa
         if (!ImmPtlNetworkConfig.doesServerHaveImmPtl()) {
             return;
         }
-        
+
         ResourceKey<Level> packetDim = ((IEPlayerPositionLookS2CPacket) packet).ip_getPlayerDimension();
         
         LocalPlayer player = Minecraft.getInstance().player;
@@ -110,13 +111,13 @@ public abstract class MixinClientPacketListener implements IEClientPlayNetworkHa
         if (packetDim != playerWorld.dimension()) {
             LOGGER.info(
                 "[ImmPtl] Client accepted position packet in another dimension. Packet: {} {} {} {}. Player: {} {} {} {}",
-                packetDim.location(), packet.getX(), packet.getY(), packet.getZ(),
+                packetDim.location(), packet.change().position().x, packet.change().position().y, packet.change().position().z,
                 playerWorld.dimension().location(), player.getX(), player.getY(), player.getZ()
             );
             
             ClientTeleportationManager.forceTeleportPlayer(
                 packetDim,
-                new Vec3(packet.getX(), packet.getY(), packet.getZ())
+                new Vec3(packet.change().position().x, packet.change().position().y, packet.change().position().z)
             );
 
 //            ClientTeleportationManager.disableTeleportFor(2);
@@ -124,7 +125,7 @@ public abstract class MixinClientPacketListener implements IEClientPlayNetworkHa
         
         LOGGER.info(
             "[ImmPtl] Client accepted position packet {} {} {} {}",
-            packetDim.location(), packet.getX(), packet.getY(), packet.getZ()
+            packetDim.location(), packet.change().position().x, packet.change().position().y, packet.change().position().z
         );
     }
     
@@ -186,7 +187,7 @@ public abstract class MixinClientPacketListener implements IEClientPlayNetworkHa
             ClientLevel currentWorld = Minecraft.getInstance().level;
             for (ClientLevel clientWorld : ClientWorldLoader.getClientWorlds()) {
                 if (clientWorld != currentWorld) {
-                    clientWorld.setGameTime(packet.getGameTime());
+                    clientWorld.getLevelData().setGameTime(packet.gameTime());
                 }
             }
         }
