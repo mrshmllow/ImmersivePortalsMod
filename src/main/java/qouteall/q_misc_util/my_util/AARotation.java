@@ -10,6 +10,7 @@ import net.minecraft.world.level.block.Rotation;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import qouteall.imm_ptl.core.McHelper;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -77,7 +78,7 @@ public enum AARotation {
     
     public Direction transformDirection(Direction direction) {
         BlockPos transformedVec = transform(direction.getUnitVec3i());
-        return Direction.fromDelta(
+        return McHelper.directionFromDelta(
             transformedVec.getX(),
             transformedVec.getY(),
             transformedVec.getZ()
@@ -87,7 +88,7 @@ public enum AARotation {
     @NotNull
     public static Direction dirCrossProduct(Direction a, Direction b) {
         Validate.isTrue(a.getAxis() != b.getAxis());
-        Direction result = Direction.fromDelta(
+        Direction result = McHelper.directionFromDelta(
             a.getStepY() * b.getStepZ() - a.getStepZ() * b.getStepY(),
             a.getStepZ() * b.getStepX() - a.getStepX() * b.getStepZ(),
             a.getStepX() * b.getStepY() - a.getStepY() * b.getStepX()

@@ -118,12 +118,13 @@ public class DimEntryWidget extends ContainerObjectSelectionList.Entry<DimEntryW
                     iconLen / 2.0f, iconLen / 2.0f, 0
                 );
             }
-            
-            guiGraphics.blit(
-                dimIconPath, 0, 0, 0.0F, 0.0F,
-                iconLen, iconLen,
-                iconLen, iconLen
-            );
+
+            // TODO(marshmallow): Fix
+//            guiGraphics.blit(
+//                dimIconPath, 0, 0, 0.0F, 0.0F,
+//                iconLen, iconLen,
+//                iconLen, iconLen
+//            );
             
             guiGraphics.pose().popPose();
         }

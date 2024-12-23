@@ -132,38 +132,6 @@ public class ImmPtlViewArea extends ViewArea {
         isAlive = false;
     }
     
-    /**
-     * It will only be called during vanilla outer world rendering
-     * Won't be called in portal rendering
-     * In {@link net.minecraft.client.renderer.SectionOcclusionGraph#initializeQueueForFullUpdate(Camera, Queue)} it reads the RenderChunks in another thread.
-     */
-    @Override
-    public void repositionCamera(double playerX, double playerZ) {
-        Profiler.get().push("built_section_storage");
-        
-        int cameraBlockX = Mth.floor(playerX);
-        int cameraBlockZ = Mth.floor(playerZ);
-        
-        int cameraChunkX = cameraBlockX >> 4;
-        int cameraChunkZ = cameraBlockZ >> 4;
-        ChunkPos cameraChunkPos = new ChunkPos(
-            cameraChunkX, cameraChunkZ
-        );
-        
-        Preset preset = presets.computeIfAbsent(
-            cameraChunkPos.toLong(),
-            whatever -> {
-                return createPresetByChunkPos(cameraChunkX, cameraChunkZ);
-            }
-        );
-        preset.lastActiveTime = System.nanoTime();
-        
-        this.sections = preset.data;
-        this.currentPreset = preset;
-        
-        Profiler.get().pop();
-    }
-    
     @Override
     public void setDirty(int cx, int cy, int cz, boolean isImportant) {
         RenderSection builtChunk = provideBuiltChunkByChunkPos(cx, cy, cz);

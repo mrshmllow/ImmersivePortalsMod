@@ -619,7 +619,7 @@ public class ClientWorldLoader {
                 ResourceLocation id = McHelper.newResourceLocation(entry.getKey());
                 int expectedId = entry.getValue();
                 
-                if (biomes.getId(biomes.get(id)) != expectedId) {
+                if (biomes.getId(biomes.getValue(id)) != expectedId) {
                     LOGGER.error("Biome id mismatch: {} {}", id, expectedId);
                 }
             }

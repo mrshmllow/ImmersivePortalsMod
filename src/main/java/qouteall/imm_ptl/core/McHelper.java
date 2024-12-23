@@ -12,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.SectionPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.ClickEvent;
@@ -962,5 +963,33 @@ public class McHelper {
         }
         
         return component;
+    }
+
+    public static Direction directionFromDelta(int x, int y, int z) {
+        if (x == 0) {
+            if (y == 0) {
+                if (z > 0) {
+                    return Direction.SOUTH;
+                }
+
+                if (z < 0) {
+                    return Direction.NORTH;
+                }
+            } else if (z == 0) {
+                if (y > 0) {
+                    return Direction.UP;
+                }
+
+                return Direction.DOWN;
+            }
+        } else if (y == 0 && z == 0) {
+            if (x > 0) {
+                return Direction.EAST;
+            }
+
+            return Direction.WEST;
+        }
+
+        return null;
     }
 }

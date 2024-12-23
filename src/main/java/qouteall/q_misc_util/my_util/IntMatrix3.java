@@ -6,6 +6,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix3f;
+import qouteall.imm_ptl.core.McHelper;
 import qouteall.q_misc_util.Helper;
 
 import java.util.Objects;
@@ -55,7 +56,7 @@ public class IntMatrix3 {
     
     public Direction transformDirection(Direction direction) {
         BlockPos vec = transform(direction.getUnitVec3i());
-        return Direction.fromDelta(vec.getX(), vec.getY(), vec.getZ());
+        return McHelper.directionFromDelta(vec.getX(), vec.getY(), vec.getZ());
     }
     
     @Override
